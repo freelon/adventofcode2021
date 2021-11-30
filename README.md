@@ -2,7 +2,7 @@
 
 This is my swing at the new Advent of Code. This year I'll try doing it with Elixir.
 
-Based on the [Advent of Code Elixir Starter|https://github.com/mhanberg/advent-of-code-elixir-starter] by _mhanberg_.
+Based on the [Advent of Code Elixir Starter](https://github.com/mhanberg/advent-of-code-elixir-starter) by _mhanberg_.
 
 # Advent of Code Elixir Starter
 
