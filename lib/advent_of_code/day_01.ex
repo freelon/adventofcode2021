@@ -1,26 +1,31 @@
 defmodule AdventOfCode.Day01 do
-  def part1(args) do
-    radar = args
-      |> String.trim()
-      |> String.split("\n")
-      |> Enum.map(&String.to_integer/1)
+  import String
+  import Enum
 
-    Enum.zip(radar, Enum.drop(radar, 1))
-      |> Enum.filter(fn {x, y} -> y > x end)
-      |> Enum.count()
+  def part1(args) do
+    radar =
+      args
+      |> trim()
+      |> String.split("\n")
+      |> map(&to_integer/1)
+
+    zip(radar, drop(radar, 1))
+    |> filter(fn {x, y} -> y > x end)
+    |> count()
   end
 
   def part2(args) do
-    radar = args
-            |> String.trim()
-            |> String.split("\n")
-            |> Enum.map(&String.to_integer/1)
+    radar =
+      args
+      |> trim()
+      |> String.split("\n")
+      |> map(&to_integer/1)
 
     radar
-      |> Enum.chunk_every(3, 1, :discard)
-      |> Enum.map(&Enum.sum/1)
-      |> Enum.chunk_every(2, 1, :discard)
-      |> Enum.filter(fn [a, b] -> b > a end)
-      |> Enum.count()
+    |> chunk_every(3, 1, :discard)
+    |> map(&sum/1)
+    |> chunk_every(2, 1, :discard)
+    |> filter(fn {x, y} -> y > x end)
+    |> count()
   end
 end
