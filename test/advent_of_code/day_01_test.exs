@@ -3,7 +3,7 @@ defmodule AdventOfCode.Day01Test do
 
   import AdventOfCode.Day01
 
-  def input, do: "199
+  defp input, do: "199
 200
 208
 210
