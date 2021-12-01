@@ -10,8 +10,7 @@ defmodule AdventOfCode.Day01 do
       |> map(&to_integer/1)
 
     zip(radar, drop(radar, 1))
-    |> filter(fn {x, y} -> y > x end)
-    |> count()
+    |> count(fn {x, y} -> y > x end)
   end
 
   def part2(args) do
@@ -25,7 +24,6 @@ defmodule AdventOfCode.Day01 do
     |> chunk_every(3, 1, :discard)
     |> map(&sum/1)
     |> chunk_every(2, 1, :discard)
-    |> filter(fn {x, y} -> y > x end)
-    |> count()
+    |> count(fn [x, y] -> y > x end)
   end
 end
