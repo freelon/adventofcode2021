@@ -10,8 +10,10 @@ defmodule Mix.Tasks.D22.P2 do
     if Enum.member?(args, "-b"),
       do: Benchee.run(%{part_2: fn -> input |> part2() end}),
       else:
-        input
-        |> part2()
-        |> IO.inspect(label: "Part 2 Results")
+        AdventOfCode.ExecutionTime.time_of(fn ->
+          input
+          |> part2()
+          |> IO.inspect(label: "Part 2 Results")
+        end)
   end
 end
