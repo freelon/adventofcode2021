@@ -2,10 +2,7 @@ defmodule AdventOfCode.Day02 do
   def part1(args) do
     {depth, horizontal_distance} =
       args
-      |> String.trim()
-      |> String.split("\n")
-      |> Enum.map(&String.split/1)
-      |> Enum.map(fn [a, b] -> {a, String.to_integer(b)} end)
+      |> parse
       |> Enum.reduce(
         {0, 0},
         fn {direction, distance}, {depth, horizontal_distance} ->
@@ -28,10 +25,7 @@ defmodule AdventOfCode.Day02 do
   def part2(args) do
     {depth, horizontal_distance, _} =
       args
-      |> String.trim()
-      |> String.split("\n")
-      |> Enum.map(&String.split/1)
-      |> Enum.map(fn [a, b] -> {a, String.to_integer(b)} end)
+      |> parse
       |> Enum.reduce(
         {0, 0, 0},
         fn {direction, distance}, {depth, horizontal_distance, aim} ->
@@ -49,5 +43,13 @@ defmodule AdventOfCode.Day02 do
       )
 
     depth * horizontal_distance
+  end
+
+  defp parse(input) do
+    input
+    |> String.trim()
+    |> String.split("\n")
+    |> Enum.map(&String.split/1)
+    |> Enum.map(fn [a, b] -> {a, String.to_integer(b)} end)
   end
 end
