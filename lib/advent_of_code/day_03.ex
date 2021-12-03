@@ -40,11 +40,58 @@ defmodule AdventOfCode.Day03 do
         if c == "0", do: "1", else: "0"
       end)
 
-    epsilon
-
     String.to_integer(Enum.join(gamma), 2) * String.to_integer(Enum.join(epsilon), 2)
   end
 
-  def part2(_args) do
+  def part2(args) do
+    lines =
+      args
+      |> String.trim()
+      |> String.split("\n")
+      |> Enum.map(&String.graphemes/1)
+
+    oxygen_generator_rating = select_by_bit_criterion(lines, :most_common, "1")
+    co2_scrubber_rating = select_by_bit_criterion(lines, :least_common, "0")
+
+    String.to_integer(Enum.join(oxygen_generator_rating), 2) *
+      String.to_integer(Enum.join(co2_scrubber_rating), 2)
   end
+
+  defp select_by_bit_criterion(list, bit_selector, tie_breaker_bit) do
+    select_by_bit_criterion(list, bit_selector, tie_breaker_bit, 0)
+  end
+
+  defp select_by_bit_criterion([x], _, _, _), do: x
+
+  defp select_by_bit_criterion(list, bit_selector, tie_breaker_bit, index) do
+    len = Enum.count(list)
+
+    zeros =
+      list
+      |> Enum.map(fn line -> Enum.at(line, index) end)
+      |> Enum.filter(fn c -> c == "0" end)
+      |> Enum.count()
+
+    most_used_bit =
+      cond do
+        zeros > len / 2 -> "0"
+        len - zeros > len / 2 -> "1"
+        true -> nil
+      end
+
+    filter_bit =
+      case bit_selector do
+        :most_common ->
+          if most_used_bit != nil, do: most_used_bit, else: tie_breaker_bit
+
+        :least_common ->
+          if most_used_bit != nil, do: reverse(most_used_bit), else: tie_breaker_bit
+      end
+
+    shortened_list = list |> Enum.filter(fn line -> Enum.at(line, index) == filter_bit end)
+    select_by_bit_criterion(shortened_list, bit_selector, tie_breaker_bit, index + 1)
+  end
+
+  defp reverse("0"), do: "1"
+  defp reverse("1"), do: "0"
 end
