@@ -16,3 +16,5 @@ try do
 rescue
   _ -> :ok
 end
+
+config :logger, level: :info
