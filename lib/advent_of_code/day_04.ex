@@ -36,7 +36,7 @@ defmodule AdventOfCode.Day04 do
   def part1(args) do
     {numbers, boards} = parse(args)
 
-    {checked, [winner|_]} = get_bingo([], numbers, boards)
+    {checked, [winner|_]} = get_first_bingo([], numbers, boards)
 
     :logger.debug("checked: #{hd(checked)}")
     sum = winner.fields |> Enum.map(fn {_, n} -> n end) |> Enum.filter(fn n -> not Enum.member?(checked, n) end) |> Enum.sum()
@@ -45,13 +45,13 @@ defmodule AdventOfCode.Day04 do
   end
 
   #  returns {list of checked, list of boards with bingo}
-  defp get_bingo(checked, open, boards) do
+  defp get_first_bingo(checked, open, boards) do
     xyz = [hd(open)] ++ checked
     :logger.debug("checked: #{inspect checked, charlists: :as_lists} - open: #{inspect open, charlists: :as_lists}")
     bingos = boards |> Enum.filter(&is_bingo(xyz, &1))
 
     if Enum.empty?(bingos) do
-      get_bingo(xyz, tl(open), boards)
+      get_first_bingo(xyz, tl(open), boards)
     else
       {xyz, bingos}
     end
@@ -84,9 +84,25 @@ defmodule AdventOfCode.Day04 do
   end
 
   def part2(args) do
-    lines =
-      args
-      |> String.trim()
-      |> String.split("\n")
+    {numbers, boards} = parse(args)
+
+    {checked, [winner|_]} = get_last_bingo([], numbers, boards)
+
+    :logger.debug("checked: #{hd(checked)}")
+    sum = winner.fields |> Enum.map(fn {_, n} -> n end) |> Enum.filter(fn n -> not Enum.member?(checked, n) end) |> Enum.sum()
+    :logger.debug("unmarked sum: #{sum}")
+    hd(checked) * sum
+  end
+
+  defp get_last_bingo(checked, open, boards) do
+    xyz = [hd(open)] ++ checked
+    :logger.debug("checked: #{inspect checked, charlists: :as_lists} - open: #{inspect open, charlists: :as_lists}")
+    {bingo, non_bingo} = boards |> Enum.split_with(&is_bingo(xyz, &1))
+
+    if Enum.empty?(non_bingo) do
+      {xyz, bingo}
+    else
+      get_last_bingo(xyz, tl(open), non_bingo)
+    end
   end
 end
