@@ -10,11 +10,9 @@ defmodule AdventOfCode.Day06Test do
     assert part1({input, 80}) == 5934
   end
 
-  @tag :skip
   test "part2" do
-    input = nil
-    result = part2(input)
+    input = "3,4,3,1,2"
 
-    assert result
+    assert part2({input, 256}) == 26_984_457_539
   end
 end
