@@ -41,7 +41,6 @@ defmodule AdventOfCode.Day06 do
     |> Map.merge(start)
     |> Enum.sort()
     |> Enum.map(fn {_, count} -> count end)
-    |> IO.inspect()
     |> smart_day(dts)
     |> Enum.sum()
   end
