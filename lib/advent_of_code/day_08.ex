@@ -91,8 +91,6 @@ defmodule AdventOfCode.Day08 do
         end)
       )
 
-    IO.inspect(solved)
-
     reverts = solved |> Enum.map(fn {i, s} -> {s, Integer.to_string(i)} end) |> Map.new()
 
     if Enum.count(reverts) < 10 do
@@ -106,6 +104,74 @@ defmodule AdventOfCode.Day08 do
     |> Enum.join()
     |> String.to_integer()
   end
-end
 
-# 772443 too low
+  def smart(args) do
+    [wires, outputs] =
+      args
+      |> String.trim()
+      |> String.split("\n")
+      |> Enum.map(&String.split(&1, " | "))
+      |> Enum.map(fn [wires, outputs] ->
+        {wires |> Enum.map(fn wire -> wire |> String.split() |> String.graphemes() end),
+         outputs |> Enum.map(fn wire -> wire |> String.split() |> String.graphemes() end)}
+      end)
+
+    numbers = %{
+      0 => "abcefg",
+      1 => "cf",
+      2 => "acdeg",
+      3 => "acdfg",
+      4 => "bcdf",
+      5 => "abdfg",
+      6 => "abdefg",
+      7 => "acf",
+      8 => "abcdefg",
+      9 => "abcdfg"
+    }
+
+    reverts = numbers |> Enum.map(fn {a, b} -> {b, a} end) |> Map.new()
+
+    chars =
+      "abcdefg"
+      |> String.graphemes()
+
+    match_perm =
+      chars
+      |> perm()
+      |> Enum.find(fn l ->
+        mapping = Enum.zip(l, chars)
+
+        wires
+        |> Enum.all?(fn wire ->
+          x =
+            wire
+            |> String.graphemes()
+            |> Enum.map(&Map.get(mapping, &1))
+            |> Enum.join()
+
+          x in Map.keys(reverts)
+        end)
+      end)
+
+    mapping = Enum.zip(match_perm, chars)
+
+    outputs
+    |> Enum.map(fn o ->
+      o
+      |> Enum.map(
+        &(Map.get(mapping, &1)
+          |> Enum.join())
+      )
+    end)
+    |> Enum.map(fn o -> reverts[o] end)
+    |> Integer.undigits()
+  end
+
+  def perm([]) do
+    [[]]
+  end
+
+  def perm(list) do
+    for h <- list, t <- perm(list -- [h]), do: [h | t]
+  end
+end

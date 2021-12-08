@@ -27,8 +27,9 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
     assert result == 61229
   end
 
-  test "solver" do
-    assert part2(
+  @tag :skip
+  test "solve it smarter" do
+    assert smart(
              "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf"
            ) == 5353
   end
