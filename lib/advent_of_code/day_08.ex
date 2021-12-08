@@ -1,7 +1,111 @@
 defmodule AdventOfCode.Day08 do
-  def part1(_args) do
+  def part1(args) do
+    args
+    |> String.trim()
+    |> String.split("\n")
+    |> Enum.map(&String.split(&1, " | "))
+    |> Enum.map(fn [wires, outputs] -> {wires |> String.split(), outputs |> String.split()} end)
+    |> Enum.flat_map(fn {_, outputs} ->
+      outputs
+      |> Enum.map(&String.length/1)
+    end)
+    |> Enum.count(&(&1 in [2, 3, 4, 7]))
   end
 
-  def part2(_args) do
+  def part2(args) do
+    args
+    |> String.trim()
+    |> String.split("\n")
+    |> Enum.map(&String.split(&1, " | "))
+    |> Enum.map(fn [wires, outputs] ->
+      {wires |> String.split() |> Enum.map(&(&1 |> String.graphemes() |> MapSet.new())),
+       outputs |> String.split() |> Enum.map(&(&1 |> String.graphemes() |> MapSet.new()))}
+    end)
+    |> Enum.map(&solve/1)
+    |> Enum.sum()
+  end
+
+  def solve({wires, outputs}) do
+    solved = %{
+      1 => wires |> Enum.find(&(Enum.count(&1) == 2)),
+      4 => wires |> Enum.find(&(Enum.count(&1) == 4)),
+      7 => wires |> Enum.find(&(Enum.count(&1) == 3)),
+      8 => wires |> Enum.find(&(Enum.count(&1) == 7))
+    }
+
+    solved =
+      Map.put(
+        solved,
+        0,
+        Enum.find(wires, fn wire ->
+          Enum.count(wire) == 6 and MapSet.subset?(solved[1], wire) and
+            not MapSet.subset?(solved[4], wire)
+        end)
+      )
+
+    solved =
+      Map.put(
+        solved,
+        6,
+        Enum.find(wires, fn wire ->
+          Enum.count(wire) == 6 and MapSet.intersection(solved[0], wire) |> Enum.count() == 5 and
+            not MapSet.subset?(solved[4], wire)
+        end)
+      )
+
+    solved =
+      Map.put(
+        solved,
+        9,
+        Enum.find(wires, fn wire ->
+          Enum.count(wire) == 6 and MapSet.intersection(solved[0], wire) |> Enum.count() == 5 and
+            MapSet.subset?(solved[4], wire)
+        end)
+      )
+
+    solved =
+      Map.put(
+        solved,
+        2,
+        Enum.find(wires, fn wire ->
+          Enum.count(wire) == 5 and MapSet.intersection(solved[6], wire) |> Enum.count() == 4 and
+            MapSet.intersection(solved[1], wire) |> Enum.count() == 1
+        end)
+      )
+
+    solved =
+      Map.put(
+        solved,
+        3,
+        Enum.find(wires, fn wire ->
+          Enum.count(wire) == 5 and MapSet.intersection(solved[1], wire) |> Enum.count() == 2
+        end)
+      )
+
+    solved =
+      Map.put(
+        solved,
+        5,
+        Enum.find(wires, fn wire ->
+          Enum.count(wire) == 5 and MapSet.intersection(solved[6], wire) |> Enum.count() == 5
+        end)
+      )
+
+    IO.inspect(solved)
+
+    reverts = solved |> Enum.map(fn {i, s} -> {s, Integer.to_string(i)} end) |> Map.new()
+
+    if Enum.count(reverts) < 10 do
+      :logger.error("#{inspect(wires |> Enum.map(&(&1 |> MapSet.to_list() |> Enum.join())))}")
+      :logger.error("missing: #{inspect(wires |> Enum.find(&(&1 not in Map.keys(reverts))))}")
+      raise "fuck"
+    end
+
+    outputs
+    |> Enum.map(&Map.get(reverts, &1))
+    |> Enum.join()
+    |> String.to_integer()
   end
 end
+
+# 772443 too low

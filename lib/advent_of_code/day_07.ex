@@ -7,13 +7,11 @@ defmodule AdventOfCode.Day07 do
       |> Enum.map(&String.to_integer/1)
 
     Enum.min(crabs)..Enum.max(crabs)
-    |> Enum.map(
-         fn pos ->
-           crabs
-           |> Enum.map(&abs(pos - &1))
-           |> Enum.sum()
-         end
-       )
+    |> Enum.map(fn pos ->
+      crabs
+      |> Enum.map(&abs(pos - &1))
+      |> Enum.sum()
+    end)
     |> Enum.min()
   end
 
@@ -25,13 +23,11 @@ defmodule AdventOfCode.Day07 do
       |> Enum.map(&String.to_integer/1)
 
     Enum.min(crabs)..Enum.max(crabs)
-    |> Enum.map(
-         fn pos ->
-           crabs
-           |> Enum.map(&consumption(abs(pos - &1)))
-           |> Enum.sum()
-         end
-       )
+    |> Enum.map(fn pos ->
+      crabs
+      |> Enum.map(&consumption(abs(pos - &1)))
+      |> Enum.sum()
+    end)
     |> Enum.min()
   end
 
