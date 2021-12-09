@@ -9,7 +9,7 @@ defmodule AdventOfCode.Day09 do
   defp get_low_points(m) do
     m
     |> Enum.filter(fn {p, v} ->
-      neighbors(m, p) |> Enum.all?(fn other -> other > v end)
+      neighbors_v(m, p) |> Enum.all?(fn other -> other > v end)
     end)
   end
 
@@ -27,11 +27,42 @@ defmodule AdventOfCode.Day09 do
     |> Map.new()
   end
 
-  defp neighbors(map, {x, y}) do
-    [{x + 1, y}, {x - 1, y}, {x, y + 1}, {x, y - 1}]
-    |> Enum.map(&Map.get(map, &1, 999))
+  defp neighbors_v(map, p) do
+    neighbors(map, p) |> Enum.map(fn {_, v} -> v end)
   end
 
-  def part2(_args) do
+  defp neighbors(map, {x, y}) do
+    [{x + 1, y}, {x - 1, y}, {x, y + 1}, {x, y - 1}]
+    |> Enum.filter(&Map.has_key?(map, &1))
+    |> Enum.map(fn p -> {p, map[p]} end)
+  end
+
+  def part2(args) do
+    map = parse(args)
+
+    get_low_points(map)
+    |> Enum.map(&get_basin(map, elem(&1, 0)))
+    |> Enum.sort()
+    |> Enum.reverse()
+    |> Enum.take(3)
+    |> Enum.reduce(1, fn size, acc -> acc * size end)
+  end
+
+  defp get_basin(map, start) do
+    basin(map, [start], MapSet.new())
+    |> Enum.count()
+  end
+
+  defp basin(map, [next | open], visited) do
+    future =
+      neighbors(map, next)
+      |> Enum.filter(fn {p, v} -> v < 9 && p not in open && p not in visited end)
+      |> Enum.map(&elem(&1, 0))
+
+    basin(map, open ++ future, MapSet.put(visited, next))
+  end
+
+  defp basin(_, [], visited) do
+    visited
   end
 end
